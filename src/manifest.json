@@ -1,0 +1,31 @@
+{
+    "manifest_version": 3,
+    "name": "Granblue Fantasy: Resubbed",
+    "version": "0.0.2",
+    "description": "Description of your extension",
+    "permissions": ["activeTab", "cookies", "scripting", "webRequest", "storage"],
+
+      "content_scripts": [
+        {
+          "js": ["scripts/gbcontent.js"],
+          "matches": [
+            "https://game.granbluefantasy.jp/*",
+            "https://game.granbluefantasy.jp/#quest/scene/*"
+          ],
+          "world": "MAIN"
+        }
+      ],
+      "web_accessible_resources": [{
+        "matches": ["https://game.granbluefantasy.jp/*"],
+        "resources": ["modules/*.js", "scripts/*.map"]
+      }],
+    "action": {
+      "default_icon": "assets/GranblueFantasyTiSIcon_16px.png",
+      "default_popup": "popup.html"
+    },
+    "icons": {
+      "16": "assets/GranblueFantasyTiSIcon_16px.png",
+      "48": "assets/GranblueFantasyTiSIcon_48px.png",
+      "128": "assets/GranblueFantasyTiSIcon_128px.png"
+    }
+  }

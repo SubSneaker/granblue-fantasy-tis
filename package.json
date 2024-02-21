@@ -1,11 +1,29 @@
 {
   "name": "granblue-fantasy-tis",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Project aimed at making browser version of granblue show dual subs",
   "main": "popup.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "postinstall": "patch-package",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npx webpack --mode production",
+    "start": "npx webpack --watch"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "@types/chrome": "^0.0.260",
+    "copy-webpack-plugin": "^12.0.2",
+    "path-browserify": "^1.0.1",
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.3.3",
+    "webpack": "^5.90.2",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^5.0.2"
+  },
+  "dependencies": {
+    "kuroshiro": "^1.2.0",
+    "kuroshiro-analyzer-kuromoji": "^1.1.0",
+    "patch-package": "^8.0.0"
+  }
 }
