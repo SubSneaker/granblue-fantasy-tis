@@ -1,6 +1,6 @@
 {
   "name": "granblue-fantasy-tis",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Project aimed at making browser version of granblue show dual subs",
   "main": "popup.js",
   "scripts": {
