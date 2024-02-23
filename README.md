@@ -44,4 +44,7 @@ I had to make a hard adjustment for this specific case so I used `patch-package`
 - [ ] Refactor the code into modules
 - [ ] Create an extension page with GUI and a background worker to maintain flags.
 - [ ] Look into possibly AI translation additions
-- [ ] Find a way to access page context such as `Game` variable to get version for request
+- [ ] Move the dictionaries to a web Storage to avoid requesting it every time and slowing the page.
+- [x] Find a way to access page context such as `Game` variable to get version for request
+- [ ] Code occasionally stops working before starting any requests, need to find out why
+- [x] Try adding options for romaji (low priority)
