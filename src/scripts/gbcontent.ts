@@ -5,112 +5,139 @@ import {
   GBChangeLanguage,
   GBRequestSceneInfo,
 } from '../modules/granblueInteractions';
-import { log, resetConsoleLog } from '../modules/utility';
+import { log, logLogo, resetConsoleLog } from '../modules/utility';
 resetConsoleLog();
 
 log('EXTENSION CONTENT SCRIPT LOADED');
 log(`Current URL: ${window.location.href}`);
+logLogo();
+
+const kuroshiro = new Kuroshiro();
 
 const USE_FURIGANA = true;
-let GAME_VERSION: string;
 (async () => {
-  const kuroshiro = new Kuroshiro();
-  if (window.location.href.includes('quest/scene')) {
-    // Initialize
-    // Here uses async/await, you could also use Promise
-    await kuroshiro.init(
-      new KuromojiAnalyzer({
-        dictPath: 'https://cdn.jsdelivr.net/npm/kuromoji/dict/',
-      })
-    );
-    // Instantiate
+  await kuroshiro.init(
+    new KuromojiAnalyzer({
+      dictPath: 'https://cdn.jsdelivr.net/npm/kuromoji/dict/',
+    })
+  );
 
-    // await getGameVariable();
+  window.addEventListener('load', async function () {
+    startTransInSubsLoop();
+  });
 
-    log('This is a scene page');
+  window.addEventListener("hashchange", (event: HashChangeEvent) => {
+    log("navigated to new URL!: ", event.newURL);
+    startTransInSubsLoop(event.newURL);
+  })
+
+})();
+
+/**
+ * This function is the main function that runs the translation loop, it will be called whenever the code is ready to run
+ * based on the conditions it's called under
+ * @param url string - The URL of the page to run the translation loop on
+ * 
+ */
+async function startTransInSubsLoop(url: string = window.location.href) {
+  if (url.includes('quest/scene')) {
+    log('scene page detected, starting translation loop');
     const sceneType: string =
       window.location.href.match(/#quest\/scene\/([^\/]+)/)?.[1] ?? '';
     log(`scene type: ${sceneType}`);
-
-    // get updated Cookies from page
-    const cookies: string = document.cookie;
-    log(cookies);
-    // use cookies to change user lang to JP temporarily in order to fetch Japanese text
-
-    window.addEventListener('load', async function () {
-      log('$$$$$$$$$$$ PAGE loaded!');
-      log('window object:', window);
-
-      log('Sending message to background page to get game variable');
-      // GAME_VERSION = chrome.runtime.sendMessage({ message: "getGameVariable" }) as unknown as string;
-
+  
+    // Runs when the page starts finished loading and the code is ready to run
       await waitForElm('.prt-message-area');
-
-      await GBChangeLanguage('JA');
-      const sceneJPData: { scene_list: Array<{ detail: string }> } = JSON.parse(
-        await GBRequestSceneInfo(sceneType)
-      );
-      let currentSceneSlide: number = 0;
-      GBChangeLanguage('EN');
-
-      log('sceneData in Japanese:', sceneJPData);
-      log(
-        'Example japanese:',
-        sceneJPData?.scene_list[currentSceneSlide].detail
-      );
-
-      const nextSlideElements: HTMLElement[] = [
-        (await waitForElm('.prt-next-btn-area')) as HTMLElement,
-        (await waitForElm('.prt-scene-comment')) as HTMLElement,
-      ];
-
-      const textBox: HTMLElement | null = await waitForElm('.prt-message-area');
-      if (textBox) {
-        textBox.style.display = 'flex';
-        textBox.style.flexFlow = 'column';
-      }
-
-      observeCurrentProgress((currentSlide: number) =>
-        insertDualSub(sceneJPData?.scene_list[currentSlide].detail)
-      );
-    });
-  }
-
-  async function insertDualSub(altText: string) {
-    const textBoxInner: HTMLElement | null = await waitForElm(
-      '.txt-message.typist-container'
-    );
-    if (textBoxInner) {
-      log('textBoxInner:', textBoxInner.textContent);
-      log('altText:', altText);
-      let newAltText = altText;
-      if (USE_FURIGANA) {
-        log('textBefore: ', altText);
-        const furiganaText = await kuroshiro.convert(altText, {
-          mode: 'furigana',
-          to: 'hiragana',
-        });
-        newAltText = furiganaText;
-        log('newAltText:', newAltText);
-      }
-      textBoxInner.style.fontSize = '12px';
-      textBoxInner.style.fontFamily = 'initial';
-      textBoxInner.insertAdjacentElement(
-        'afterend',
-        (() => {
-          const altLangText = textBoxInner.cloneNode() as HTMLElement;
-          altLangText.innerHTML = newAltText;
-          return altLangText;
-        })()
+  
+      const sceneData = await getSceneData(sceneType);
+      await preparePageForDualSubs();
+      await observeCurrentProgress((currentSlide: number) =>
+        insertDualSub(sceneData?.scene_list[currentSlide].detail)
       );
     }
+ }
+
+
+async function preparePageForDualSubs() {
+  const textBox: HTMLElement | null = await waitForElm('.prt-message-area');
+  if (textBox) {
+    textBox.style.display = 'flex';
+    textBox.style.flexFlow = 'column';
   }
-})();
+}
+
+async function getSceneData(
+  sceneName: string,
+  { from, to }: { from: string; to: string } = { from: 'EN', to: 'JA' }
+): Promise<{ scene_list: Array<{ detail: string }> }> {
+  await GBChangeLanguage(to);
+  const sceneData: { scene_list: Array<{ detail: string }> } = JSON.parse(
+    await GBRequestSceneInfo(sceneName)
+  );
+  GBChangeLanguage(from);
+
+  log('sceneData in Japanese:', sceneData);
+  log('Example japanese:', sceneData?.scene_list[0].detail);
+  return sceneData;
+}
+
+async function insertDualSub(altText: string) {
+  const textBoxInner: HTMLElement | null = await waitForElm(
+    '.txt-message.typist-container'
+  );
+  if (textBoxInner) {
+    log('textBoxInner:', textBoxInner.textContent);
+    log('text Before Parsing:', altText);
+    const translatedTextBody = (new DOMParser).parseFromString(altText, 'text/html').body;
+    log('translatedTextBody:', translatedTextBody);
+    if (USE_FURIGANA) {
+      await processNode(translatedTextBody);
+      log('newAltText after Parsed:', translatedTextBody);
+    }
+    textBoxInner.style.fontSize = '12px';
+    textBoxInner.style.fontFamily = 'initial';
+    textBoxInner.insertAdjacentElement(
+      'afterend',
+      (() => {
+        const altLangText = textBoxInner.cloneNode() as HTMLElement;
+        altLangText.innerHTML = translatedTextBody.innerHTML;
+        log('new AltText data: ', altLangText);
+        return altLangText;
+      })()
+    );
+  }
+}
+
+async function processNode(node: ChildNode) {
+  if (node.nodeType === Node.TEXT_NODE && (node.nodeValue || '' ).trim() !== '') {
+      // Convert text node to Kanji with Romaji Furigana
+      log('TEXT NODE FOUND ::: node.nodeValue:', node.nodeValue);
+      const furiganaText = await kuroshiro.convert(node.nodeValue, {
+        mode: 'furigana',
+        to: 'romaji',
+      });
+      log('furiganaText:', furiganaText);
+      const tempContainer = document.createElement('span');
+      tempContainer.innerHTML = furiganaText;
+      log('tempContainer:', tempContainer);
+      // Replace the current text node with the new elements
+      while (tempContainer.firstChild) {
+        node.parentNode!.insertBefore(tempContainer.firstChild, node);
+    }
+      node.parentNode!.removeChild(node);
+
+  } else if (node.nodeType === Node.ELEMENT_NODE) {
+      // Recursively process child nodes for elements
+      for(const child of node.childNodes) {
+        await processNode(child);
+      }
+  }
+}
 
 function observeCurrentProgress(callback: (currentSlide: number) => void) {
   const progressElm: Element | null =
     document.querySelector('.prt-log-display');
-  const observer = new MutationObserver((mutations) => {
+  const observer = new MutationObserver( (mutations) => {
     log('progress changed:', mutations);
     for (const mutation of mutations) {
       if (mutation.addedNodes.length > 0) {

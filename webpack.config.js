@@ -5,7 +5,7 @@ module.exports = {
   mode: 'development', // or 'production'
   devtool: 'cheap-source-map',
   entry: {
-    background: './src/scripts/background.ts',
+    // background: './src/scripts/background.ts',
     gbcontent: './src/scripts/gbcontent.ts',
     // popup: './src/popup.ts',
   },
