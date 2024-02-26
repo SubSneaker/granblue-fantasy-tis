@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Granblue Fantasy: Translation In Subs</title>
+    <style>
+        body {
+            width: 400px;
+            height: 150px;
+            margin: 0;
+            overflow: hidden ;
+        }
+
+        .window-container {
+            display: flex;
+            flex-flow: column;
+            padding: 0 60px;
+            background: url('assets/GranblueFantasyTiS_MenuBuild_Body.jpg') repeat;
+            background-size: contain;
+            color: rgb(33, 43, 52);
+        }
+        .content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            margin-bottom: 50px;
+        }
+
+        .separator {
+            margin: 12px 0;
+            width: 100%;
+        }
+
+        .config-options {
+            display: flex;
+            flex-flow: column;
+            width: 100%;
+        }
+        .config-options > * {
+            display: flex;
+            flex-flow: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <img src="assets/GranblueFantasyTiS_MenuBuild_Header.jpg" width="100%" style="margin-bottom: -3px;">
+    <div class="window-container">
+        <img src="assets/GranblueFantastyTiSUi_separator01.png" class="separator" alt="separator">
+
+        <section class="content">
+            <div class="config-options">
+                <div class="furigana-selection">
+                    <label for="furigana-select"> <p><b>Choose furigana type:</b></p> </label>
+                    <select id="furigana-select">
+                        <option value="none" selected>None</option>
+                        <option value="hiragana">Hiragana</option>
+                        <option value="katakana">Katakana</option>
+                        <option value="romaji">Romaji</option>
+                    </select>
+                </div>
+            </div>
+            <button id="save" style="margin: 12px;">Save Changes</button>
+            <img src="assets/GranblueFantastyTiSUi_separator01.png" class="separator" alt="separator">
+            <h2>Data reset:</h2>
+            <p> Clicking the button below will reset the app settings to default and remove stored data such as
+                dictionaries.<br>
+                <i style="color: darkcyan;">Use this option if you are experiencing issues.</i>
+            </p>
+            <button id="reset">Reset App Data</button>
+        </section>
+
+        <img src="assets/GranblueFantasyTiS_MenuBuild_Footer.jpg" class="footer" width="100%" style="margin-bottom: -3px;">
+    </div>
+
+    <script src="scripts/popup.js"></script>
+</body>
+
+</html>

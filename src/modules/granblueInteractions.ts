@@ -1,4 +1,13 @@
 import { log } from './utility';
+
+const configHeaders: { [key: string]: string | number | null } = {};
+
+export const setConfigHeaders = (headers: any) => {
+  for (const header in headers) {
+    configHeaders[header] = headers[header];
+  }
+}
+
 /**
  * Changes the language setting in Granblue Fantasy.
  * @param language The language to set. Defaults to "EN".
@@ -55,8 +64,12 @@ export const GBRequest = async (
     'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36'
   );
   myHeaders.append('X-Requested-With', 'XMLHttpRequest');
-  myHeaders.append('X-VERSION', (window as any)?.Game?.version);
 
+  if (configHeaders) {
+    for (const header in configHeaders) {
+      myHeaders.append(header, configHeaders[header] as string);
+    }
+  }
   if (options?.headers) {
     for (const header in options.headers) {
       myHeaders.append(header, options.headers[header]);

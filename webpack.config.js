@@ -1,13 +1,13 @@
 const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 module.exports = {
   mode: 'development', // or 'production'
   devtool: 'cheap-source-map',
   entry: {
-    // background: './src/scripts/background.ts',
     gbcontent: './src/scripts/gbcontent.ts',
-    // popup: './src/popup.ts',
+    bridgeContent: './src/scripts/bridgeContent.ts',
+    popup: './src/scripts/popup.ts',
   },
   output: {
     filename: '[name].js',
@@ -24,7 +24,10 @@ module.exports = {
           from: path.resolve(__dirname, 'src/manifest.json'),
           to: path.resolve(__dirname, 'extension/manifest.json')
         },
-        
+        {
+          from: path.resolve(__dirname, 'src/popup.html'),
+          to: path.resolve(__dirname, 'extension/popup.html')
+        },
       ],
     }),
   ],

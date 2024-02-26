@@ -4,7 +4,9 @@ import KuromojiAnalyzer from 'kuroshiro-analyzer-kuromoji';
 import {
   GBChangeLanguage,
   GBRequestSceneInfo,
+  setConfigHeaders
 } from '../modules/granblueInteractions';
+import { getConfig, appConfig } from '../modules/config';
 import { log, logLogo, resetConsoleLog } from '../modules/utility';
 resetConsoleLog();
 
@@ -12,9 +14,18 @@ log('EXTENSION CONTENT SCRIPT LOADED');
 log(`Current URL: ${window.location.href}`);
 logLogo();
 
+window.addEventListener('message', (event: MessageEvent) => {
+  // log('Message received : ', event);
+
+  if(event.data?.type === 'TO_ISOLATED_WORLD') {
+  log('Message received from: ', event.origin);
+  log('Message data: ', event.data?.gameVersion);
+  setConfigHeaders({ 'X-VERSION': event.data?.gameVersion });
+  }
+})
+window.postMessage({action:'getGameVersion', type: 'TO_PAGE_CONTEXT'}, 'https://game.granbluefantasy.jp/');
 const kuroshiro = new Kuroshiro();
 
-const USE_FURIGANA = true;
 (async () => {
   await kuroshiro.init(
     new KuromojiAnalyzer({
@@ -23,12 +34,12 @@ const USE_FURIGANA = true;
   );
 
   window.addEventListener('load', async function () {
-    startTransInSubsLoop();
+    await startTransInSubsLoop();
   });
 
-  window.addEventListener("hashchange", (event: HashChangeEvent) => {
-    log("navigated to new URL!: ", event.newURL);
-    startTransInSubsLoop(event.newURL);
+  window.addEventListener('hashchange',async  (event: HashChangeEvent) => {
+    log('navigated to new URL!: ', event.newURL);
+    await startTransInSubsLoop(event.newURL);
   })
 
 })();
@@ -41,6 +52,9 @@ const USE_FURIGANA = true;
  */
 async function startTransInSubsLoop(url: string = window.location.href) {
   if (url.includes('quest/scene')) {
+    await getConfig();
+    log('appConfig:', appConfig);
+
     log('scene page detected, starting translation loop');
     const sceneType: string =
       window.location.href.match(/#quest\/scene\/([^\/]+)/)?.[1] ?? '';
@@ -90,7 +104,7 @@ async function insertDualSub(altText: string) {
     log('text Before Parsing:', altText);
     const translatedTextBody = (new DOMParser).parseFromString(altText, 'text/html').body;
     log('translatedTextBody:', translatedTextBody);
-    if (USE_FURIGANA) {
+    if (appConfig.furiganaType && appConfig.furiganaType !== 'none') {
       await processNode(translatedTextBody);
       log('newAltText after Parsed:', translatedTextBody);
     }
@@ -114,7 +128,7 @@ async function processNode(node: ChildNode) {
       log('TEXT NODE FOUND ::: node.nodeValue:', node.nodeValue);
       const furiganaText = await kuroshiro.convert(node.nodeValue, {
         mode: 'furigana',
-        to: 'romaji',
+        to: appConfig.furiganaType,
       });
       log('furiganaText:', furiganaText);
       const tempContainer = document.createElement('span');
@@ -129,6 +143,8 @@ async function processNode(node: ChildNode) {
   } else if (node.nodeType === Node.ELEMENT_NODE) {
       // Recursively process child nodes for elements
       for(const child of node.childNodes) {
+        // To avoid duplication the code should skip furigana elements
+        if(!['RT','RP', 'RUBY'].includes(child.nodeName))
         await processNode(child);
       }
   }
