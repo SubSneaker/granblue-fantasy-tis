@@ -3,7 +3,7 @@ import { log } from '../modules/utility';
 log('Popup script loaded!');
 
 function restoreOptions() {
-  chrome.storage.sync.get(['furigana'], function (items) {
+  chrome.storage.sync.get(['furigana', 'targetLanguage'], function (items) {
     log('fetched storage sync items:', items);
     if (items.furigana) {
       (document.getElementById('furigana-select') as HTMLSelectElement).value =
@@ -11,6 +11,13 @@ function restoreOptions() {
     } else {
       (document.getElementById('furigana-select') as HTMLSelectElement).value =
         'none';
+    }
+    if (items.targetLanguage) {
+      (document.getElementById('language-select') as HTMLSelectElement).value =
+        items.targetLanguage;
+    } else {
+      (document.getElementById('language-select') as HTMLSelectElement).value =
+        'JA';
     }
   });
 }
@@ -32,9 +39,32 @@ function saveOptions() {
   const FuriganaType = (
     document.getElementById('furigana-select') as HTMLSelectElement
   ).value;
-  chrome.storage.sync.set({ furigana: FuriganaType }, function () {
-    log('Furigana Value is set to ' + FuriganaType);
-  });
+  const targetLanguage = (
+    document.getElementById('language-select') as HTMLSelectElement
+  ).value;
+  chrome.storage.sync.set(
+    { furigana: FuriganaType, targetLanguage },
+    function () {
+      log('Furigana Value is set to: ' + FuriganaType);
+      log('Target Language is set to: ' + targetLanguage);
+    }
+  );
+
+  chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+    log('Active tab:', tabs[0]);
+    // Check if the active tab's URL is Granblue Fantasy
+    if(tabs[0].url?.startsWith("https://game.granbluefantasy.jp/")) {
+        // Send a message directly to the content script running in the active granblue tab
+        
+        log('Sending message to content script at tab Id:', tabs[0].id, ' tab URL:', tabs[0].url);
+        chrome.tabs.sendMessage(tabs[0].id!, 
+          {
+            type: 'TO_ISOLATED_WORLD',
+            action: "configUpdate"
+          });
+    }
+});
+
   alert('Options Saved!');
 }
 

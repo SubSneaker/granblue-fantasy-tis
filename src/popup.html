@@ -8,17 +8,19 @@
             width: 400px;
             height: 150px;
             margin: 0;
-            overflow: hidden ;
+            overflow: hidden;
         }
 
         .window-container {
             display: flex;
+            position: relative;
             flex-flow: column;
             padding: 0 60px;
             background: url('assets/GranblueFantasyTiS_MenuBuild_Body.jpg') repeat;
             background-size: contain;
             color: rgb(33, 43, 52);
         }
+
         .content {
             display: flex;
             flex-direction: column;
@@ -38,7 +40,8 @@
             flex-flow: column;
             width: 100%;
         }
-        .config-options > * {
+
+        .config-options>* {
             display: flex;
             flex-flow: column;
             align-items: center;
@@ -60,15 +63,29 @@
 
         <section class="content">
             <div class="config-options">
-                <div class="furigana-selection">
-                    <label for="furigana-select"> <p><b>Choose furigana type:</b></p> </label>
-                    <select id="furigana-select">
-                        <option value="none" selected>None</option>
-                        <option value="hiragana">Hiragana</option>
-                        <option value="katakana">Katakana</option>
-                        <option value="romaji">Romaji</option>
+                <div class="choose-language">
+                    <label for="language-select">
+                        <p><b>Choose Language to translate to: </b></p>
+                    </label>
+                    <select id="language-select">
+                        <option value="JA" selected>Japanese</option>
+                        <option value="EN">English</option>
                     </select>
-                </div>
+                    <i> This setting should be set opposite of what you use for your game UI or it will possibly
+                        duplicate the text. <br>Requires page refresh after saving changes.</i>
+                    </div>
+                    <div class="furigana-selection">
+                        <label for="furigana-select">
+                            <p><b>Choose furigana type:</b></p>
+                        </label>
+                        <select id="furigana-select">
+                            <option value="none" selected>None</option>
+                            <option value="hiragana">Hiragana</option>
+                            <option value="katakana">Katakana</option>
+                            <option value="romaji">Romaji</option>
+                        </select>
+                        <i>Only set this to anything other than "None" if your target language is Japanese and you require reading assistance.</i>
+                    </div>
             </div>
             <button id="save" style="margin: 12px;">Save Changes</button>
             <img src="assets/GranblueFantastyTiSUi_separator01.png" class="separator" alt="separator">
@@ -80,7 +97,8 @@
             <button id="reset">Reset App Data</button>
         </section>
 
-        <img src="assets/GranblueFantasyTiS_MenuBuild_Footer.jpg" class="footer" width="100%" style="margin-bottom: -3px;">
+        <img src="assets/GranblueFantasyTiS_MenuBuild_Footer.jpg" class="footer" width="100%"
+            style="margin-bottom: -3px;">
     </div>
 
     <script src="scripts/popup.js"></script>

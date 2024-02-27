@@ -15,7 +15,7 @@ export const setConfigHeaders = (headers: any) => {
  */
 export const GBChangeLanguage = (language: string = 'EN') => {
   return GBRequest(
-    `https://game.granbluefantasy.jp/setting/save?_=${Date.now()}&t=${Date.now()}`,
+    `${process.env.GRANBLUE_URL}/setting/save?_=${Date.now()}&t=${Date.now()}`,
     {
       method: 'POST',
       data: {
@@ -32,11 +32,18 @@ export const GBChangeLanguage = (language: string = 'EN') => {
  * @param sceneType - The type of scene to request information for.
  * @returns A Promise that resolves to the response from the server.
  */
-export const GBRequestSceneInfo = async (sceneType: string) => {
-  return await GBRequest(
-    `https://game.granbluefantasy.jp/quest/scenario/${sceneType}?_=${Date.now()}&t=${Date.now()}`,
-    { method: 'GET', data: {}, headers: {} }
-  );
+export const GBRequestSceneInfo = async (sceneType: string, sceneId: string) => {
+  if (sceneType == 'quest') {
+    return await GBRequest(
+      `${process.env.GRANBLUE_URL}/quest/scenario/${sceneId}?_=${Date.now()}&t=${Date.now()}`,
+      { method: 'GET', data: {}, headers: {} }
+    );
+  } else {
+    return await GBRequest(
+      `${process.env.GRANBLUE_URL}/rest/sidestory/scenario/${sceneId}?_=${Date.now()}&t=${Date.now()}`,
+      { method: 'GET', data: {}, headers: {} }
+    );
+  }
 };
 
 /**
@@ -56,9 +63,9 @@ export const GBRequest = async (
   myHeaders.append('Cache-Control', 'no-cache');
   myHeaders.append('Connection', 'keep-alive');
   myHeaders.append('Content-Type', 'application/json');
-  myHeaders.append('Origin', 'https://game.granbluefantasy.jp');
+  myHeaders.append('Origin', `${process.env.GRANBLUE_URL}`);
   myHeaders.append('Pragma', 'no-cache');
-  myHeaders.append('Referer', 'https://game.granbluefantasy.jp/');
+  myHeaders.append('Referer', `${process.env.GRANBLUE_URL}/`);
   myHeaders.append(
     'User-Agent',
     'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36'

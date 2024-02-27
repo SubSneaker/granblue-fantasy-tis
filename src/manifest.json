@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Granblue Fantasy: Translation in Subs",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Description of your extension",
   "permissions": [
     "storage",
@@ -16,14 +16,16 @@
       "js": ["scripts/gbcontent.js"],
       "matches": [
         "https://game.granbluefantasy.jp/*",
-        "https://game.granbluefantasy.jp/#quest/scene/*"
+        "https://game.granbluefantasy.jp/#quest/scene/*",
+        "https://game.granbluefantasy.jp/#sidestory/scene/*"
       ]
     },
     {
       "js": ["scripts/bridgeContent.js"],
       "matches": [
         "https://game.granbluefantasy.jp/*",
-        "https://game.granbluefantasy.jp/#quest/scene/*"
+        "https://game.granbluefantasy.jp/#quest/scene/*",
+        "https://game.granbluefantasy.jp/#sidestory/scene/*"
       ],
       "world": "MAIN"
     }

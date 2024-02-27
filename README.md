@@ -65,7 +65,8 @@ The extension will be built in mode `production` and will be ready to be loaded 
 ![separator](src/assets/GranblueFantastyTiSUi_separator01.png)
 
 ## Currently known issues:
-- On some occasions the extension stops working and doesn't load the translated subs into the game's text box. Causes are still unknown, need to be worked on. Currently the only solution is to refresh the page.
+- Due to a timing issue, the extension sometimes doesn't load the translations into the game's text box. This is due to the extension trying to find game-context flags after the game fully loaded to avoid undefined issues. If this happens going to the next textbox will usually resolve the matter.
+- On some occasions the extension stops working and doesn't load the translated subs into the game's text box. Causes are still unknown, need to be worked on. Currently the only solution is to refresh the page. In the future i'll add a logdump feature to help debug this issue.
 
 ## Specific issues handled:
 

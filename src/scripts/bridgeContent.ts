@@ -8,16 +8,19 @@ log('Game variable:', game);
 if (game) {
   // Pass the Game variable to the isolated content script
   window.addEventListener('message', (event: MessageEvent) => {
-    if (
-      event.data?.action == 'getGameVersion' &&
-      event.source === window &&
-      event.data?.type === 'TO_PAGE_CONTEXT'
-    ) {
-      log('Game version requested');
+    if (event.source === window && event.data?.type === 'TO_PAGE_CONTEXT') {
+      log('Game data requested');
       window.postMessage(
-        { type: 'TO_ISOLATED_WORLD', gameVersion: game.version },
+        {
+          type: 'TO_ISOLATED_WORLD',
+          action: 'gameData',
+          gameVersion: game.version,
+          gameLanguage: game.lang,
+          gameSceneId: game.view.scene_id,
+        },
         '*'
       );
+      log('Game data sent');
     }
   });
 } else {
