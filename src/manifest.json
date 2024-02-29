@@ -36,12 +36,12 @@
     }
   ],
   "action": {
-    "default_icon": "assets/GranblueFantasyTiSIcon_16px.png",
+    "default_icon": "assets/GBFTiSIcon_16px.png",
     "default_popup": "popup.html"
   },
   "icons": {
-    "16": "assets/GranblueFantasyTiSIcon_16px.png",
-    "48": "assets/GranblueFantasyTiSIcon_48px.png",
-    "128": "assets/GranblueFantasyTiSIcon_128px.png"
+    "16": "assets/GBFTiSIcon_16px.png",
+    "48": "assets/GBFTiSIcon_48px.png",
+    "128": "assets/GBFTiSIcon_128px.png"
   }
 }

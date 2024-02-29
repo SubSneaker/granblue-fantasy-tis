@@ -21,9 +21,10 @@ The English text is provided by the game's official translation, and the Japanes
   - [Currently known issues:](#currently-known-issues)
   - [Specific issues handled:](#specific-issues-handled)
   - [Risks regarding usage and liability](#risks-regarding-usage-and-liability)
-  - [Privacy Policy](#privacy-policy)
   - [Issues and Feature requests](#issues-and-feature-requests)
-    - [TODO:](#todo)
+  - [TODO:](#todo)
+  - [Privacy Policy](#privacy-policy)
+  - [License](#license)
 
 ![separator](src/assets/GBFTiSUi_separator01.png)
 
@@ -91,14 +92,12 @@ In addition, if for some reason Granblue Fantasy's developers decide to change t
 
 So while this should go without saying, I am not responsible for any consequences that may arise from using this extension, including but not limited to suspension or bans. **Use at your own risk.**
 
-## Privacy Policy
-Please refer to the [Privacy Policy](PRIVACY_POLICY.md) for more information.
 
 ## Issues and Feature requests
 If you have any issues or feature requests, feel free to open an issue on the [issues page](https://github.com/SubSneaker/GBFTiS/issues).
 I cannot guarantee that I will be able to address every issue or feature request, as this is mostly a pet project, so it mostly depends on the reception to this and my own scheduling.
 
-### TODO:
+## TODO:
 - [x] Fix the routing issue (eg. When a page enters a scene without being refreshed or a new address (Dynamic URL change), it won't retrigger the code to run again).
 - [ ] Refactor the code into modules
 - [x] Create an extension page with GUI and a background worker to maintain flags.
@@ -109,3 +108,11 @@ I cannot guarantee that I will be able to address every issue or feature request
 - [x] Find a way to access page context such as `Game` variable to get version for request
 - [ ] Code occasionally stops working before starting any requests, need to find out why
 - [x] Try adding options for romaji (low priority)
+
+![separator](src/assets/GBFTiSUi_separator01.png)
+
+## Privacy Policy
+Please refer to the [Privacy Policy](PRIVACY_POLICY.md) for more information.
+
+## License
+MIT License.

@@ -99,8 +99,18 @@ async function startTransInSubsLoop(url: string = window.location.href) {
       from: SOURCE_LANGUAGE,
       to: appConfig.targetLanguage,
     });
+
     await preparePageForDualSubs();
-    await insertDualSub(sceneData?.scene_list[0].detail)
+
+    // If the initial slide is not a detail slide, keep incrementing until reaching the first detail slide (has text to translate)
+    let initialSlide = 0;
+    while(!sceneData?.scene_list[initialSlide].detail){ 
+      initialSlide++;
+      if(initialSlide >= sceneData?.scene_list.length){
+        break;
+      }
+    }
+    await insertDualSub(sceneData?.scene_list[initialSlide].detail)
     observeCurrentProgress((currentSlide: number) =>
       insertDualSub(sceneData?.scene_list[currentSlide].detail)
     );

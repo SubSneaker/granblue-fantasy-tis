@@ -11,7 +11,7 @@
     "prestart": "patch-package",
     "start": "npx webpack --watch"
   },
-  "author": "",
+  "author": "SubSneaker",
   "license": "ISC",
   "devDependencies": {
     "@types/chrome": "^0.0.260",
