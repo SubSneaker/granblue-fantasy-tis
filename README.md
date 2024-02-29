@@ -21,6 +21,7 @@ The English text is provided by the game's official translation, and the Japanes
   - [Currently known issues:](#currently-known-issues)
   - [Specific issues handled:](#specific-issues-handled)
   - [Risks regarding usage and liability](#risks-regarding-usage-and-liability)
+  - [Privacy Policy](#privacy-policy)
   - [Issues and Feature requests](#issues-and-feature-requests)
     - [TODO:](#todo)
 
@@ -89,6 +90,9 @@ To that extent, I will explicitly **AVOID** endorsing, making compatibility upda
 In addition, if for some reason Granblue Fantasy's developers decide to change the app in significant ways or specifically may block this extension's standard behavior, I may or may not resign from continuing support or adjusting the extension to work with the new changes. If I believe that the GBF team or Cygames Inc. is taking actions against this extension, it may be removed entirely.
 
 So while this should go without saying, I am not responsible for any consequences that may arise from using this extension, including but not limited to suspension or bans. **Use at your own risk.**
+
+## Privacy Policy
+Please refer to the [Privacy Policy](PRIVACY_POLICY.md) for more information.
 
 ## Issues and Feature requests
 If you have any issues or feature requests, feel free to open an issue on the [issues page](https://github.com/SubSneaker/GBFTiS/issues).
