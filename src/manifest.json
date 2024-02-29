@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Granblue Fantasy: Translation in Subs",
-  "version": "0.0.5",
-  "description": "Description of your extension",
+  "name": "GBF: Translation in Subs",
+  "version": "0.0.7",
+  "description": "A tool to have dual subs and translations for Granblue Fantasy in your browser!.",
   "permissions": [
     "storage",
     "unlimitedStorage",
@@ -29,7 +29,6 @@
       ],
       "world": "MAIN"
     }
-    
   ],
   "web_accessible_resources": [
     {

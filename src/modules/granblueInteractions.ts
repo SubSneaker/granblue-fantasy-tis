@@ -33,14 +33,14 @@ export const GBChangeLanguage = (language: string = 'EN') => {
  * @returns A Promise that resolves to the response from the server.
  */
 export const GBRequestSceneInfo = async (sceneType: string, sceneId: string) => {
-  if (sceneType == 'quest') {
+  if (sceneType == 'sidestory') {
     return await GBRequest(
-      `${process.env.GRANBLUE_URL}/quest/scenario/${sceneId}?_=${Date.now()}&t=${Date.now()}`,
+      `${process.env.GRANBLUE_URL}/rest/sidestory/scenario/${sceneId}?_=${Date.now()}&t=${Date.now()}`,
       { method: 'GET', data: {}, headers: {} }
     );
   } else {
     return await GBRequest(
-      `${process.env.GRANBLUE_URL}/rest/sidestory/scenario/${sceneId}?_=${Date.now()}&t=${Date.now()}`,
+      `${process.env.GRANBLUE_URL}/quest/scenario/${sceneId}?_=${Date.now()}&t=${Date.now()}`,
       { method: 'GET', data: {}, headers: {} }
     );
   }

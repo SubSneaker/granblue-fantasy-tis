@@ -1,13 +1,14 @@
 {
-  "name": "granblue-fantasy-tis",
-  "version": "0.0.5",
+  "name": "gbf-tis",
+  "version": "0.0.7",
   "description": "Project aimed at making browser version of granblue show dual subs",
   "main": "popup.js",
   "scripts": {
     "patch-package": "patch-package",
     "postinstall": "patch-package",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "npx webpack --mode production",
+    "build": "patch-package && npx webpack --mode production",
+    "prestart": "patch-package",
     "start": "npx webpack --watch"
   },
   "author": "",

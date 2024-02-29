@@ -53,10 +53,10 @@ function saveOptions() {
   chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
     log('Active tab:', tabs[0]);
     // Check if the active tab's URL is Granblue Fantasy
+    log('Sending message to content script at tab Id:', tabs[0].id, ' tab URL:', tabs[0].url);
     if(tabs[0].url?.startsWith("https://game.granbluefantasy.jp/")) {
         // Send a message directly to the content script running in the active granblue tab
         
-        log('Sending message to content script at tab Id:', tabs[0].id, ' tab URL:', tabs[0].url);
         chrome.tabs.sendMessage(tabs[0].id!, 
           {
             type: 'TO_ISOLATED_WORLD',

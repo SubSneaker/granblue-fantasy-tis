@@ -14,7 +14,7 @@ logLogo();
 log(`Current URL: ${window.location.href}`);
 let SOURCE_LANGUAGE = 'EN',
   SCENE_ID = '';
-
+let observer: MutationObserver;
 // listens to messages from the page context sent by `bridgeContent.ts`
 window.addEventListener('message', (event: MessageEvent) => {
   // log('Message received : ', event);
@@ -64,6 +64,8 @@ const kuroshiro = new Kuroshiro();
     'hashchange',
     async function (event: HashChangeEvent) {
       log('navigated to new URL!: ', event.newURL);
+      log('will wait Elm .prt-message-area');
+      await waitForElm('.prt-message-area');
       window.postMessage(
         { type: 'TO_PAGE_CONTEXT' },
         'https://game.granbluefantasy.jp/'
@@ -80,7 +82,8 @@ const kuroshiro = new Kuroshiro();
  *
  */
 async function startTransInSubsLoop(url: string = window.location.href) {
-  if (url.includes('/scene/')) {
+  if (url.includes('/scene') || url.includes('archive/story')) {
+    dualSubLoading(true);
     await getConfig();
     log('appConfig:', appConfig);
 
@@ -91,16 +94,18 @@ async function startTransInSubsLoop(url: string = window.location.href) {
     log(`scene Type: ${sceneType}`);
 
     // Runs when the page starts finished loading and the code is ready to run
-    await waitForElm('.prt-message-area');
 
     const sceneData = await getSceneData(sceneType, sceneId, {
       from: SOURCE_LANGUAGE,
       to: appConfig.targetLanguage,
     });
     await preparePageForDualSubs();
+    await insertDualSub(sceneData?.scene_list[0].detail)
     observeCurrentProgress((currentSlide: number) =>
       insertDualSub(sceneData?.scene_list[currentSlide].detail)
     );
+    dualSubLoading(false);
+
   }
 }
 
@@ -109,6 +114,57 @@ async function preparePageForDualSubs() {
   if (textBox) {
     textBox.style.display = 'flex';
     textBox.style.flexFlow = 'column';
+  }
+  const style = document.createElement('style');
+  style.textContent = `
+    .loading-spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #3498db;
+      border-radius: 50%;
+      width: 80px;
+      height: 80px;
+      animation: spin 2s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }`;
+  document.head.appendChild(style);
+
+  log('Page layout prepared for dual subs!');
+}
+
+async function dualSubLoading(isLoading: boolean) {
+  // inject a loading spinner to the page to indicate that the translation is in progress
+  if (isLoading) {
+    const loadingSpinner = document.createElement('div');
+    loadingSpinner.id = 'dual-sub-loading';
+    Object.assign(loadingSpinner.style, {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      position: 'fixed',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      zIndex: '401000',
+      fontSize: '16px',
+      padding: '20px 40px',
+      background: 'rgba(0,0,0,0.6)',
+      color: 'white',
+      borderRadius: '20px',
+
+    });
+    loadingSpinner.innerHTML = `
+      <div class="loading-spinner" style="margin: auto;"></div><br>
+      <div> Loading Dual Subs, please wait...</div>`;
+    document.body.appendChild(loadingSpinner);
+  } else {
+    const loadingSpinner = document.getElementById('dual-sub-loading');
+    if (loadingSpinner) {
+      loadingSpinner.remove();
+    }
   }
 }
 
@@ -124,7 +180,6 @@ async function getSceneData(
   GBChangeLanguage(from);
 
   log('sceneData in Japanese:', sceneData);
-  log('Example japanese:', sceneData?.scene_list[0].detail);
   return sceneData;
 }
 
@@ -201,7 +256,15 @@ async function processNode(node: ChildNode) {
 function observeCurrentProgress(callback: (currentSlide: number) => void) {
   const progressElm: Element | null =
     document.querySelector('.prt-log-display');
-  const observer = new MutationObserver((mutations) => {
+  // If there is a previous observer, disconnect it, and create a new one.
+  // This is necessary because otherwise the previous observer will not fetch the new data and keep using the previous script
+  if (observer) {
+    log(
+      'Previous observer found! likely non-refresh URL navigation, disconnecting previous observer...'
+    );
+    observer.disconnect();
+  }
+  observer = new MutationObserver((mutations) => {
     log('progress changed:', mutations);
     for (const mutation of mutations) {
       if (mutation.addedNodes.length > 0) {
